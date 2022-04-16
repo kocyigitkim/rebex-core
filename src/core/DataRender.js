@@ -1,6 +1,13 @@
-import React from 'react'
-import { Chip, Link } from '@mui/material'
-import { truncateString } from '../utils';
+import React, { useEffect, useState } from 'react'
+import { BadgeRender } from './DataComponents/BadgeRender';
+import { IdRender } from './DataComponents/IdRender';
+import { EmailRender } from './DataComponents/EmailRender';
+import { PhoneRender } from './DataComponents/PhoneRender';
+import { UrlRender } from './DataComponents/UrlRender';
+import { StatusRender } from './DataComponents/StatusRender';
+import { LinkRender } from './DataComponents/LinkRender';
+import { Avatar } from '@mui/material';
+import { LoadingOverlay } from '../base/components/LoadingOverlay';
 export function DataRender(props) {
     const eventNames = Object.keys(props.column).filter(key => key.startsWith('on'));
     const events = eventNames.reduce((acc, key) => {
@@ -9,45 +16,6 @@ export function DataRender(props) {
     }, {});
 
     return <div {...events}>{props.value}</div>;
-}
-
-export function BadgeRender(props) {
-    return <Chip {...props} label={props.value}></Chip>;
-}
-export function IdRender(props) {
-    return <Chip {...props} onClick={() => {
-        if (props.column.onClick) props.column.onClick(props);
-    }} label={truncateString("#" + (props.showId ? props.value : ''), 10)}></Chip>;
-}
-
-export function EmailRender(props) {
-    return <Link style={{
-        cursor: 'pointer',
-        ...props.style
-    }} {...props} target="_blank" href={`mailto:${props.value}`} onClick={() => {
-        if (props.column.onClick) props.column.onClick(props);
-    }}>{props.value}</Link>;
-}
-
-export function PhoneRender(props) {
-    return <Link style={{
-        cursor: 'pointer',
-        ...props.style
-    }} {...props} target="_blank" href={`tel:${props.value}`} onClick={() => {
-        if (props.column.onClick) props.column.onClick(props);
-    }}>{props.value}</Link>;
-}
-
-export function UrlRender(props) {
-    var link = props.value || "";
-    if (link.indexOf("http://") === -1 && link.indexOf("https://") === -1) link = "http://" + link;
-
-    return <Link style={{
-        cursor: 'pointer',
-        ...props.style
-    }} {...props} target="_blank" href={link} onClick={() => {
-        if (props.column.onClick) props.column.onClick(props);
-    }}>{props.value}</Link>;
 }
 
 export class DataRenderRegistry {
@@ -63,20 +31,21 @@ export class DataRenderRegistry {
     }
 }
 
-export function StatusRender(props) {
-    const column = props.column;
-    const color = (column.colorMap && column.colorMap[props.value]) || 'inherit';
-    const text = (column.colorMap && column.map[props.value]) || props.value;
-    return <Chip {...props} color={color} label={text}></Chip>;
+function ImageRender(props) {
+    const [loading, setLoading] = useState(true);
+    const onLoadStart = () => setLoading(true);
+    const onLoadedData = () => setTimeout(() => { setLoading(false); }, 500);
+    useEffect(() => {
+        onLoadStart();
+    }, [props.value]);
+    return <div style={{ position: 'relative', display: 'inline-block' }}>
+        <LoadingOverlay style={{ borderRadius: '100%', transform: 'scale(1.2)' }} size={20} loading={loading} />
+        <Avatar imgProps={{
+            onLoad: onLoadedData
+        }} {...props} src={props.value} />
+    </div>;
 }
-export function LinkRender(props) {
-    return <Link style={{
-        cursor: 'pointer',
-        ...props.style
-    }} {...props} target="_blank" onClick={() => {
-        if (props.column.onClick) props.column.onClick(props);
-    }}>{props.value}</Link>;
-}
+
 DataRenderRegistry.register('link', LinkRender);
 DataRenderRegistry.register('default', DataRender);
 DataRenderRegistry.register('badge', BadgeRender);
@@ -85,3 +54,4 @@ DataRenderRegistry.register('id', IdRender);
 DataRenderRegistry.register('email', EmailRender);
 DataRenderRegistry.register('phone', PhoneRender);
 DataRenderRegistry.register('url', UrlRender);
+DataRenderRegistry.register('image', ImageRender);

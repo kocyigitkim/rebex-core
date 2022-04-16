@@ -8,7 +8,7 @@ import { DataList, LoadingOverlay, RebexDataProvider } from '../src/index';
 
 const darkTheme = createTheme({
   palette: {
-    mode: 'dark'
+    mode: 'light'
   }
 })
 
@@ -20,7 +20,7 @@ const dataProvider = new AxiosDataProvider({
 });
 
 function ExamplePage(props) {
-  return (<div style={{ background: 'black', height: '100vh' }}>
+  return (<div style={{}}>
 
     <ThemeProvider theme={darkTheme}>
       <RebexDataProvider provider={dataProvider}>
@@ -28,40 +28,45 @@ function ExamplePage(props) {
 
 
         <DataTable source={{
-          path: 'users',
+          path: 'posts',
           method: 'get'
         }}
-          contextMenu={(row)=>{
-            console.log(row);
-            return ([
-            {
-              label: 'Edit',
-              disabled: true
-            },
-            {
-              label: 'Delete',
-            }
-          ])}}
+          style={{ borderRadius: 6 }}
+          title='Tablo - 1'
+
           columns={[
             {
               field: 'id',
-              title: 'ID'
+              title: 'ID',
+              align: 'center'
+            },
+            {
+              title: 'Image',
+              customValue: (row) => "https://picsum.photos/200",
+              renderer: 'image'
             },
             {
               title: "Company",
-              customValue: (row) => row.company.name,
+              customValue: (row) => row.company && row.company.name,
               disableSort: true
             },
             {
               title: 'Name',
               field: 'name',
+              align: 'right'
             },
             {
               title: 'User Name',
               field: 'username',
-              renderer: 'link',
-              onClick: ({ row }) => {
-                alert(JSON.stringify(row))
+              computedProps: (props)=>{
+                return {
+                  ...props,
+                  style: {
+                    ...props,
+                    //pastel red by rgba
+                    backgroundColor: 'rgba(255, 0, 0, 0.5)'
+                  }
+                }
               }
             },
             {

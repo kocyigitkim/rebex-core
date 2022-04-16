@@ -143,7 +143,7 @@ const NestedMenuItem = React.forwardRef(function NestedMenuItem(props, ref) {
     if (!props.disabled) {
         tabIndex = tabIndexProp !== undefined ? tabIndexProp : -1;
     }
-console.log(props);
+
     return (
         <div
             {...ContainerProps}
@@ -220,12 +220,16 @@ function nestedMenuItemsFromObject({
             // No children elements, return MenuItem
             return (
                 <IconMenuItem
+                    {...item}
                     key={label}
                     leftIcon={leftIcon}
                     rightIcon={rightIcon}
                     label={label}
                     onClick={() => {
                         handleClose();
+                        if (item.onClick) {
+                            item.onClick();
+                        }
                     }}
                 />
             );
@@ -255,6 +259,7 @@ const ContextMenu = forwardRef(
             const left = e.clientX;
 
             if (mouseDownPosition === null) return;
+            if (e.button !== 2) return;
 
             setMenuPosition({ top: e.clientY, left: e.clientX });
         };
@@ -275,8 +280,11 @@ const ContextMenu = forwardRef(
                         onMouseDown: handleMouseDown,
                         onMouseUp: handleMouseUp,
                         onContextMenu: (e) => {
+
                             e.preventDefault();
                             e.stopPropagation();
+
+                            console.log(e, child);
                         }
                     });
 
@@ -288,6 +296,11 @@ const ContextMenu = forwardRef(
                     onClose={() => setMenuPosition(null)}
                     anchorReference="anchorPosition"
                     anchorPosition={menuPosition}
+                    PaperProps={{
+                        style: {
+                            minWidth: 100
+                        }
+                    }}
                 >
                     {menuItems}
                 </Menu>

@@ -1,3 +1,5 @@
 {
-    "search": "Search"
+    "search": "Search",
+    "rows.selected": "{0} row(s) selected",
+    "rows.total": "Total: {0}"
 }

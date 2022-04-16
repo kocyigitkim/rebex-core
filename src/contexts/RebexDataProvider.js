@@ -12,50 +12,22 @@ export function useRebexData() {
   return useContext(RebexDataContext);
 }
 
-const DefaultBreakpoints = {
-  mobile: { max: 800 },
-  desktop: { min: 1024 }
-}
+
 
 export function RebexDataProvider(props) {
   const localization = props.localization || ENLocalization;
-  const breakpoints = props.breakpoints || DefaultBreakpoints;
-  const [breakpoint, setBreakpoint] = useState('desktop');
+
+  const [breakpoint, setBreakpoint] = useState();
 
   useEffect(() => {
 
     const handleResize = () => {
-      var currentBreakpoint = breakpoint;
-      var newBreakpoint = null;
-      for (var key in breakpoints) {
-        var min = breakpoints[key].min;
-        var max = breakpoints[key].max;
-        if (min) {
-          if (max) {
-            if (window.innerWidth >= min && window.innerWidth < max) {
-              newBreakpoint = key;
-              break;
-            }
-          }
-          else {
-            if (window.innerWidth >= min) {
-              newBreakpoint = key;
-              break;
-            }
-          }
-        }
-        else {
-          if (max) {
-            if (window.innerWidth < max) {
-              newBreakpoint = key;
-              break;
-            }
-          }
-        }
-      }
+      var newBreakpoint = 'desktop';
+      if (window.innerWidth <= 800) newBreakpoint = 'mobile';
+
       if (!newBreakpoint) newBreakpoint = 'desktop';
-      console.log('newBreakpoint', newBreakpoint, currentBreakpoint);
-      if (newBreakpoint != currentBreakpoint) {
+      if (newBreakpoint != breakpoint) {
+        console.log('CHANGED');
         setBreakpoint(newBreakpoint);
       }
     }
@@ -71,7 +43,7 @@ export function RebexDataProvider(props) {
       localization: localization,
       breakpoint: breakpoint,
       isMobile: breakpoint === 'mobile',
-      isDesktop: breakpoint === 'desktop',
+      isDesktop: breakpoint !== 'mobile',
       translate: ((key) => {
         return localization[key] || key;
       })

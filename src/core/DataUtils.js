@@ -10,6 +10,9 @@ export const DataUtils = {
         if (Array.isArray(data)) {
             var isAsc = sort.direction === 'asc';
             var sortedData = data.sort((a, b) => {
+                if((typeof a == typeof b )&& typeof a == 'number'){
+                    return isAsc ? a - b : b - a;
+                }
                 var aField = (a[sort.field] || "").toString();
                 var bField = (b[sort.field] || "").toString();
                 if (aField > bField) return isAsc ? 1 : -1;
