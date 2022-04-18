@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useRebexData } from "../../contexts/RebexDataProvider";
 import { FormElementRegistry } from "../FormComponents/FormElementRegistry";
 
-function RebexFormFieldPlace(fields, values, setFields, setValues, options) {
+function RebexFormFieldPlace(form, fields, values, setFields, setValues, options) {
     const { translate } = useRebexData();
     const fieldName = options.name;
     const fieldTitle = options.title;
@@ -32,7 +32,7 @@ function RebexFormFieldPlace(fields, values, setFields, setValues, options) {
 
     return (<>
         {fieldTitle && !hideTitle && <Typography variant="body1">{fieldTitle}{options.required ? '  *' : ''}</Typography>}
-        <FieldComponent key={fieldName} fullWidth={true} ref={ref} value={values[fieldName]} onChange={(e) => {
+        <FieldComponent form={form} key={fieldName} fullWidth={true} ref={ref} value={values[fieldName]} onChange={(e) => {
             setValues({ ...values, [fieldName]: e });
             if (!firstValueSet) setFirstValueSet(true);
         }} {...options} />
@@ -40,9 +40,9 @@ function RebexFormFieldPlace(fields, values, setFields, setValues, options) {
         {firstValueSet && !hideValidation ? (
             <>
                 {showValidationSuccess ? (
-                    <Alert severity="success">{translate('form.validated')}</Alert>
+                    <Alert sx={{ mt: 0.5 }} severity="success">{translate('form.validated')}</Alert>
                 ) : (
-                    <Alert severity="error">{translate('form.validation.error')}</Alert>
+                    <Alert sx={{ mt: 0.5 }} severity="error">{translate('form.validation.error')}</Alert>
                 )}
             </>
         ) : null}
@@ -125,7 +125,7 @@ export function useRebexForm(options) {
     const [validated, validationResults] = checkFormValidation(fields, values);
 
     const form = {
-        place: RebexFormFieldPlace.bind(null, fields, values, (newFields) => setFields({ ...fields, ...newFields }), setValues),
+        options: options,
         title: RebexFormTitle,
         loading: loading,
         error: error,
@@ -135,6 +135,7 @@ export function useRebexForm(options) {
         validations: validationResults,
         submit: RebexFormSubmit.bind(null, fields, values, setLoading, setError, setResult, submit)
     }
+    form.place = RebexFormFieldPlace.bind(null, form, fields, values, (newFields) => setFields({ ...fields, ...newFields }), setValues);
     form.placeButton = RebexFormPlaceButton.bind(null, { ...form, setLoading, setError, setResult });
     return form;
 }

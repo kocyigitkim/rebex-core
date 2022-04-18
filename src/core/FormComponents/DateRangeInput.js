@@ -11,9 +11,13 @@ export function DateRangeInput(props) {
             props.value.map((v) => moment(v, props.format))
         ) : [null, null]}
         onChange={(e) => {
-            props.onChange(e ? (
-                props.format ? e.map((v) => v && moment(v).format(props.format)) : e.map((v) => v && moment(v).toDate().toISOString())
-            ) : [null, null]);
+            try {
+                props.onChange(e ? (
+                    props.format ? e.map((v) => v && moment(v).format(props.format)) : e.map((v) => v && moment(v).toDate().toISOString())
+                ) : [null, null]);
+            } catch (err) {
+                console.error(err);
+            }
         }}
         renderInput={(startProps, endProps) => (
             <Box display={"flex"} alignItems="center" sx={{ width: '100%' }}>

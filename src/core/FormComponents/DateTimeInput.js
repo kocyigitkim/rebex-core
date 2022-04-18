@@ -8,9 +8,13 @@ export function DateTimeInput(props) {
         {...props}
         value={props.value ? (moment(props.value, props.format)) : null}
         onChange={(e) => {
-            props.onChange(e ? (
-                props.format ? moment(e).format(props.format) : moment(e).toDate().toISOString()
-            ) : null);
+            try {
+                props.onChange(e ? (
+                    props.format ? moment(e).format(props.format) : moment(e).toDate().toISOString()
+                ) : null);
+            } catch (err) {
+                console.error(err);
+            }
         }}
         renderInput={(params) => <TextField fullWidth {...params} />} />);
 }

@@ -2,7 +2,9 @@ import { CheckBoxField, RadioListField, TextInput } from './TextInput';
 import { DateInput } from './DateInput';
 import { DateRangeInput } from './DateRangeInput';
 import { DateTimeInput } from './DateTimeInput';
-import { TimeInput} from './TimeInput';
+import { TimeInput } from './TimeInput';
+import { SelectField } from './SelectField';
+import { FileUploadField } from './FileUploadField';
 
 export class FormElementRegistry {
     constructor() {
@@ -29,3 +31,5 @@ FormElementRegistry.register('daterange', DateRangeInput);
 FormElementRegistry.register('time', TimeInput);
 FormElementRegistry.register('checkbox', CheckBoxField);
 FormElementRegistry.register('radiolist', RadioListField);
+FormElementRegistry.register('select', SelectField);
+FormElementRegistry.register('fileupload', FileUploadField);

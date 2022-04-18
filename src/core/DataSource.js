@@ -14,7 +14,7 @@ export class AxiosDataProvider extends DataProvider {
         this.options = chooseIfNotUndefined(options, {});
     }
     create(options) {
-        return new AxiosDataSource(mergeDeep(this.options, options));
+        return new AxiosDataSource(mergeDeep({ ...this.options }, options));
     }
 }
 

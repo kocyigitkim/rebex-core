@@ -15,7 +15,7 @@ const darkTheme = createTheme({
 })
 
 const dataProvider = new AxiosDataProvider({
-  url: 'https://jsonplaceholder.typicode.com/',
+  url: 'https://jsonplaceholder.typicode.com',
   headers: {
     'Content-Type': 'application/json',
   }
@@ -23,10 +23,11 @@ const dataProvider = new AxiosDataProvider({
 
 function ExampleForm(props) {
   const form = useRebexForm({
+    provider: dataProvider,
     submit: (form) => console.log(form)
   });
 
-  return (<Paper sx={{ p: 2, m: 1, display: 'inline-block', width: '100%', maxWidth: 600, position: 'relative' }} elevation={10}>
+  return (<Paper sx={{ p: 2, m: 1, position: 'relative' }} elevation={10}>
     <LoadingOverlay loading={form.loading} />
     {form.title('Form 1')}
 
@@ -35,32 +36,46 @@ function ExampleForm(props) {
         {form.place({ type: 'checkbox', name: 'checkbox1', title: 'CheckBox Item', label: 'Enable Notifications' })}
       </Grid>
       <Grid item xs={12} sm={6}>
-        {form.place({ type: 'radiolist', items: [
-          { value: '1', label: 'Option 1' },
-          { value: '2', label: 'Option 2' },
-          { value: '3', label: 'Option 3' }
-        ], name: 'radios', title: 'Radio List Item', label: 'Severity Level' })}
+        {form.place({
+          type: 'radiolist', items: [
+            { value: '1', label: 'Option 1' },
+            { value: '2', label: 'Option 2' },
+            { value: '3', label: 'Option 3' }
+          ], name: 'radios', title: 'Radio List Item', label: 'Severity Level'
+        })}
       </Grid>
       <Grid item xs={12} sm={6}>
-        {form.place({ type: 'text', name: 'firstName', title: 'First Name', placeholder: 'First Name', required: true })}
+        {form.place({ required: true, type: 'text', name: 'firstName', title: 'First Name', placeholder: 'First Name', required: true })}
       </Grid>
       <Grid item xs={12} sm={6}>
-        {form.place({ type: 'text', name: 'lastName', title: 'Last Name', placeholder: 'Last Name', required: true })}
+        {form.place({ required: true, type: 'text', name: 'lastName', title: 'Last Name', placeholder: 'Last Name', required: true })}
       </Grid>
       <Grid item xs={12} sm={6}>
-        {form.place({ type: 'tel', name: 'phone', title: 'Phone', placeholder: 'Phone' })}
+        {form.place({ required: true, type: 'tel', name: 'phone', title: 'Phone', placeholder: 'Phone' })}
       </Grid>
       <Grid item xs={12} sm={6}>
-        {form.place({ validate: yup.string().email(), type: 'email', name: 'email', title: 'Email', placeholder: 'Email' })}
+        {form.place({ required: true, validate: yup.string().email(), type: 'email', name: 'email', title: 'Email', placeholder: 'Email' })}
       </Grid>
       <Grid item xs={12} sm={6}>
-        {form.place({ type: 'date', name: 'birthDate', title: 'Birth Date', placeholder: 'Birth Date' })}
+        {form.place({ required: true, type: 'date', name: 'birthDate', title: 'Birth Date', placeholder: 'Birth Date' })}
       </Grid>
       <Grid item xs={12} sm={6}>
-        {form.place({ type: 'daterange', name: 'workDate', title: 'Work Date', placeholder: 'Work Date' })}
+        {form.place({ required: true, type: 'daterange', name: 'workDate', title: 'Work Date', placeholder: 'Work Date' })}
       </Grid>
       <Grid item xs={12} sm={6}>
-        {form.place({ type: 'time', name: 'yearPicker', title: 'Year Picker', placeholder: 'Year Picker' })}
+        {form.place({ required: true, type: 'time', name: 'yearPicker', title: 'Year Picker', placeholder: 'Year Picker' })}
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        {form.place({
+          required: true,
+          type: 'select', name: 'select', title: 'Select', placeholder: 'Select', source: {
+            path: '/users',
+            method: 'get'
+          }, valueField: 'id', labelField: 'name'
+        })}
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        {form.place({ type: 'fileupload', name: 'fileupload', title: 'File Upload', placeholder: 'File Upload' })}
       </Grid>
     </Grid>
 
@@ -90,11 +105,11 @@ function ExamplePage(props) {
       <RebexDataProvider provider={dataProvider}>
 
 
-        <ExampleForm />
+        {/* <ExampleForm /> */}
 
 
-        {/* <DataTable source={{
-          path: 'photos',
+        <DataTable source={{
+          path: '/users',
           method: 'get'
         }}
           title='Tablo - 1'
@@ -187,7 +202,7 @@ function ExamplePage(props) {
               }
             }
           ]}
-        /> */}
+        />
       </RebexDataProvider>
     </ThemeProvider>
   </div>);
