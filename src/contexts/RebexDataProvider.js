@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { DataProvider } from '../core/DataSource';
 import { chooseIfNotUndefined } from '../utils';
-
-import ENLocalization from '../localization/en.json';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { ENLanguage } from '../localization/en';
+import { LocalizationProvider } from '@mui/lab';
 
 const RebexDataContext = createContext({});
 
@@ -15,7 +16,7 @@ export function useRebexData() {
 
 
 export function RebexDataProvider(props) {
-  const localization = props.localization || ENLocalization;
+  const localization = props.localization || ENLanguage;
 
   const [breakpoint, setBreakpoint] = useState();
 
@@ -38,17 +39,19 @@ export function RebexDataProvider(props) {
     }
   }, []);
   return (
-    <RebexDataContext.Provider value={{
-      provider: chooseIfNotUndefined(props.provider, new DataProvider()),
-      localization: localization,
-      breakpoint: breakpoint,
-      isMobile: breakpoint === 'mobile',
-      isDesktop: breakpoint !== 'mobile',
-      translate: ((key) => {
-        return localization[key] || key;
-      })
-    }}>
-      {props.children}
-    </RebexDataContext.Provider>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <RebexDataContext.Provider value={{
+        provider: chooseIfNotUndefined(props.provider, new DataProvider()),
+        localization: localization,
+        breakpoint: breakpoint,
+        isMobile: breakpoint === 'mobile',
+        isDesktop: breakpoint !== 'mobile',
+        translate: ((key) => {
+          return localization[key] || key;
+        })
+      }}>
+        {props.children}
+      </RebexDataContext.Provider>
+    </LocalizationProvider>
   )
 }

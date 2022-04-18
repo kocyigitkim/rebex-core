@@ -307,12 +307,25 @@ export default function DataTable(props) {
 }
 function RenderDataCell({ column, row, index, data }) {
     const [CurrentRenderer, setCurrentRenderer] = useState(() => {
+        if (!column) return null;
         const renderer = DataRenderRegistry.get(typeof column.renderer === 'object' ? column.renderer.name : (column.renderer || 'default'));
         return renderer;
     });
     const [CurrentFormat, setCurrentFormat] = useState(() => {
-        return column.format && DataFormatRegistry.get(column.format.name).create(column.format);;
+        return column.format ? DataFormatRegistry.get(column.format.name).create(column.format) : null;
     });
+
+    // useEffect(() => {
+    //     if (!column) return;
+    //     if (typeof column.renderer === 'object') {
+    //         setCurrentRenderer(DataRenderRegistry.get(column.renderer.name));
+    //     }
+    //     else {
+    //         setCurrentRenderer(DataRenderRegistry.get(column.renderer || 'default'));
+    //     }
+    // }, [column.renderer]);
+
+    if (!CurrentRenderer || (typeof CurrentRenderer === 'function') === false || !column || !row || !data) return null;
 
     var value = row[column.field];
     if (column.customValue) {
@@ -322,29 +335,18 @@ function RenderDataCell({ column, row, index, data }) {
             console.error(e);
         }
     }
-    const formattedValue = CurrentFormat ? CurrentFormat.format(value) : value;
-    // const render = column.render;
-    // if (render) {
-    //     return render(formattedValue, row, index, data);
-    // }
 
-    const rendered = (<CurrentRenderer {...{
+    const formattedValue = CurrentFormat && CurrentFormat.format ? CurrentFormat.format(value) : value;
+    const rendered = (CurrentRenderer({
+        ...(typeof column.renderer === 'object' ? column.renderer : {}),
+        key: 'c-' + index,
         value: formattedValue,
         column: column,
         row: row,
         index: index,
-        data: data,
-        ...(typeof column.renderer === 'object' ? column.renderer : {})
-    }} key={'c-' + index}></CurrentRenderer>);
-
-    useEffect(() => {
-        if (typeof column.renderer === 'object') {
-            setCurrentRenderer(DataRenderRegistry.get(column.renderer.name));
-        }
-        else {
-            setCurrentRenderer(DataRenderRegistry.get(column.renderer || 'default'));
-        }
-    }, [column.renderer]);
+        data: data
+    }));
+    console.log(rendered);
 
     return (
         <div style={{

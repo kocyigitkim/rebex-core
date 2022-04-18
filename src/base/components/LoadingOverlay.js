@@ -5,7 +5,6 @@ export function LoadingOverlay(props) {
     const open = props.loading || props.open || props.visible || props.show;
     return (<div style={{
         backgroundColor: 'rgba(0,0,0,0.75)',
-        backdropFilter: 'blur(10px)',
         transition: 'opacity 0.3s ease-in-out',
         zIndex: 3,
         display: 'flex',

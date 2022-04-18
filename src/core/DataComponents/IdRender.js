@@ -4,6 +4,7 @@ import { truncateString } from '../../utils';
 
 
 export function IdRender(props) {
+    if(!props.value) return null;
     return <Chip {...props} onClick={() => {
         if (props.column.onClick)
             props.column.onClick(props);

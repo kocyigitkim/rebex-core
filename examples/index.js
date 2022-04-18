@@ -1,10 +1,12 @@
 import './index.css'
-import { createTheme, ThemeProvider, withTheme } from '@mui/material';
+import { createTheme, Grid, Paper, ThemeProvider, withTheme } from '@mui/material';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import DataTable from '../src/base/DataTable';
 import { AxiosDataProvider } from '../src/core/DataSource';
-import { DataList, LoadingOverlay, RebexDataProvider } from '../src/index';
+import { DataList, LoadingOverlay, RebexDataProvider, useRebexForm } from '../src/index';
+import SaveIcon from '@mui/icons-material/Save'
+import * as yup from 'yup'
 
 const darkTheme = createTheme({
   palette: {
@@ -19,6 +21,68 @@ const dataProvider = new AxiosDataProvider({
   }
 });
 
+function ExampleForm(props) {
+  const form = useRebexForm({
+    submit: (form) => console.log(form)
+  });
+
+  return (<Paper sx={{ p: 2, m: 1, display: 'inline-block', width: '100%', maxWidth: 600, position: 'relative' }} elevation={10}>
+    <LoadingOverlay loading={form.loading} />
+    {form.title('Form 1')}
+
+    <Grid container spacing={1}>
+      <Grid item xs={12} sm={6}>
+        {form.place({ type: 'checkbox', name: 'checkbox1', title: 'CheckBox Item', label: 'Enable Notifications' })}
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        {form.place({ type: 'radiolist', items: [
+          { value: '1', label: 'Option 1' },
+          { value: '2', label: 'Option 2' },
+          { value: '3', label: 'Option 3' }
+        ], name: 'radios', title: 'Radio List Item', label: 'Severity Level' })}
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        {form.place({ type: 'text', name: 'firstName', title: 'First Name', placeholder: 'First Name', required: true })}
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        {form.place({ type: 'text', name: 'lastName', title: 'Last Name', placeholder: 'Last Name', required: true })}
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        {form.place({ type: 'tel', name: 'phone', title: 'Phone', placeholder: 'Phone' })}
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        {form.place({ validate: yup.string().email(), type: 'email', name: 'email', title: 'Email', placeholder: 'Email' })}
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        {form.place({ type: 'date', name: 'birthDate', title: 'Birth Date', placeholder: 'Birth Date' })}
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        {form.place({ type: 'daterange', name: 'workDate', title: 'Work Date', placeholder: 'Work Date' })}
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        {form.place({ type: 'time', name: 'yearPicker', title: 'Year Picker', placeholder: 'Year Picker' })}
+      </Grid>
+    </Grid>
+
+    <Grid container justifyContent={"flex-end"} mt={2}>
+      {form.placeButton({
+        type: 'submit',
+        title: 'Save',
+        icon: <SaveIcon sx={{ mr: 1 }} />,
+        props: {
+          variant: 'contained'
+        },
+        validated: true,
+        onClick: async (form) => {
+          //console.log(a,b);
+          await form.submit();
+        }
+      })}
+    </Grid>
+
+  </Paper>);
+}
+
 function ExamplePage(props) {
   return (<div style={{}}>
 
@@ -26,12 +90,13 @@ function ExamplePage(props) {
       <RebexDataProvider provider={dataProvider}>
 
 
+        <ExampleForm />
 
-        <DataTable source={{
-          path: 'posts',
+
+        {/* <DataTable source={{
+          path: 'photos',
           method: 'get'
         }}
-          style={{ borderRadius: 6 }}
           title='Tablo - 1'
 
           columns={[
@@ -40,11 +105,11 @@ function ExamplePage(props) {
               title: 'ID',
               align: 'center'
             },
-            {
-              title: 'Image',
-              customValue: (row) => "https://picsum.photos/200",
-              renderer: 'image'
-            },
+            // {
+            //   title: 'Image',
+            //   customValue: (row) => "https://picsum.photos/200",
+            //   renderer: 'image'
+            // },
             {
               title: "Company",
               customValue: (row) => row.company && row.company.name,
@@ -122,7 +187,7 @@ function ExamplePage(props) {
               }
             }
           ]}
-        />
+        /> */}
       </RebexDataProvider>
     </ThemeProvider>
   </div>);

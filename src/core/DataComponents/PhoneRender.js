@@ -3,6 +3,7 @@ import { Link } from '@mui/material';
 
 
 export function PhoneRender(props) {
+    if(!props.value) return null;
     return <Link style={{
         cursor: 'pointer',
         ...props.style
