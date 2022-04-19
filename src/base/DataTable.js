@@ -23,7 +23,7 @@ const StyledTableRow = styled(TableRow)(({ theme, selected }) => ({
     }
 }));
 
-export default function DataTable(props) {
+export function RebexTable(props) {
     const { translate, provider, isMobile } = useRebexData();
     const [currentData, setData] = useState([]);
     const [dataSource, setDataSource] = useState(null);

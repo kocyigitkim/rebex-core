@@ -2,9 +2,7 @@ import './index.css'
 import { createTheme, Grid, Paper, ThemeProvider, withTheme } from '@mui/material';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import DataTable from '../src/base/DataTable';
-import { AxiosDataProvider } from '../src/core/DataSource';
-import { DataList, LoadingOverlay, RebexDataProvider, useRebexForm } from '../src/index';
+import { AxiosDataProvider, DataList, LoadingOverlay, RebexDataProvider, RebexTable, useRebexForm } from '../src/index';
 import SaveIcon from '@mui/icons-material/Save'
 import * as yup from 'yup'
 
@@ -108,7 +106,7 @@ function ExamplePage(props) {
         {/* <ExampleForm /> */}
 
 
-        <DataTable source={{
+        <RebexTable source={{
           path: '/users',
           method: 'get'
         }}
